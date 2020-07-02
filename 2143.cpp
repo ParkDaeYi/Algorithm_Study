@@ -4,56 +4,55 @@
 using namespace std;
 typedef long long int llt;
 
-int T, N, M, a[1000], b[1000];
-vector<int> aa, bb;
+int T, n, m, A_arr[1000], B_arr[1000];
+vector<int> A, B;
 llt ans;
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(NULL);
+	ios_base::sync_with_stdio(0);
+	cin.tie(0); cout.tie(0);
 
-	cin >> T >> N;
-
-	for (int n = 0; n < N; ++n) cin >> a[n];
-	for (int i = 0; i < N; ++i) {
-		int sum = a[i];
-		aa.push_back(sum);
-		for (int j = i + 1; j < N; ++j) {
-			sum += a[j];
-			aa.push_back(sum);
+	cin >> T >> n;
+	for (int i = 0; i < n; ++i) cin >> A_arr[i];
+	for (int i = 0; i < n; ++i) {	// 계산 과정을 줄이기 위해 미리 부 배열의 합들을 구해 둠
+		int sum = A_arr[i];
+		A.push_back(sum);
+		for (int j = i + 1; j < n; ++j) {
+			sum += A_arr[j];
+			A.push_back(sum);
 		}
 	}
-	cin >> M;
-	for (int i = 0; i < M; ++ i) cin >> b[i];
-	for (int i = 0; i < M; ++i) {
-		int sum = b[i];
-		bb.push_back(sum);
-		for (int j = i + 1; j < M; ++j) {
-			sum += b[j];
-			bb.push_back(sum);
+	cin >> m;
+	for (int i = 0; i < m; ++i) cin >> B_arr[i];
+	for (int i = 0; i < m; ++i) {
+		int sum = B_arr[i];
+		B.push_back(sum);
+		for (int j = i + 1; j < m; ++j) {
+			sum += B_arr[j];
+			B.push_back(sum);
 		}
 	}
-	sort(aa.begin(), aa.end());
-	sort(bb.begin(), bb.end());
-	int al = 0, br = bb.size() - 1;
-	while (al < aa.size() && br >= 0) {
-		llt sum = aa[al] + bb[br];
-		int tmp;
+	sort(A.begin(), A.end());
+	sort(B.begin(), B.end());
+
+	int A_point = 0, B_point = B.size() - 1, tmp;	// A와 B의 시작 지점을 서로 다르게 지정(처음과 끝)
+	while (A_point < A.size() && B_point >= 0) {
+		llt sum = A[A_point] + B[B_point];
 		if (sum < T) {
-			tmp = aa[al];
-			while (al < aa.size() && aa[al] == tmp) al++;
+			tmp = A[A_point];
+			while (A_point < A.size() && A[A_point] == tmp) A_point++;	// 같은 숫자의 경우 스킵
 		}
 		else if (sum > T) {
-			tmp = bb[br];
-			while (br >= 0 && bb[br] == tmp) br--;
+			tmp = B[B_point];
+			while (B_point >= 0 && B[B_point] == tmp) B_point--;
 		}
 		else {
-			llt cntA = 0, cntB = 0;
-			tmp = aa[al];
-			while (al < aa.size() && aa[al] == tmp) { al++; cntA++; }
-			tmp = bb[br];
-			while (br >= 0 && bb[br] == tmp) { br--; cntB++; }
-			ans += cntA * cntB;
+			llt A_cnt = 0, B_cnt = 0;
+			tmp = A[A_point];
+			while (A_point < A.size() && A[A_point] == tmp) A_point++, A_cnt++;	// 동일한 숫자의 갯수를 카운트
+			tmp = B[B_point];
+			while (B_point >= 0 && B[B_point] == tmp) B_point--, B_cnt++;
+			ans += A_cnt * B_cnt;
 		}
 	}
 	cout << ans;
