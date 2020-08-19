@@ -1,21 +1,21 @@
 #include <iostream>
+#define N 20
 using namespace std;
 
-int n, m, ans;
-int dy[4] = { 1,-1,0,0 };
-int dx[4] = { 0,0,1,-1 };
-char mp[21][21];
-bool used[26];
+int n, m, map[N][N], ans;
+int dx[4] = { 1,-1,0,0 };
+int dy[4] = { 0,0,1,-1 };
+bool visit[26];
 
-void backtrack(int y, int x, int cnt) {
-	if (ans < cnt) ans = cnt;
+void solve(int y, int x, int dist) {
+	if (ans < dist) ans = dist;
 	for (int i = 0;i < 4;++i) {
 		int ny = y + dy[i], nx = x + dx[i];
 		if (ny < 0 || nx < 0 || ny >= n || nx >= m) continue;
-		if (used[mp[ny][nx] - 'A']) continue;
-		used[mp[ny][nx] - 'A'] = 1;
-		backtrack(ny, nx, cnt + 1);
-		used[mp[ny][nx] - 'A'] = 0;
+		if (visit[map[ny][nx]]) continue;
+		visit[map[ny][nx]] = 1;
+		solve(ny, nx, dist + 1);
+		visit[map[ny][nx]] = 0;
 	}
 }
 
@@ -24,9 +24,13 @@ int main() {
 	cin.tie(0); cout.tie(0);
 
 	cin >> n >> m;
-	for (int i = 0;i < n;++i) for (int j = 0;j < m;++j) cin >> mp[i][j];
-	used[mp[0][0] - 'A'] = 1;
-	backtrack(0, 0, 1);
+	char c;
+	for (int i = 0;i < n;++i) for (int j = 0;j < m;++j) {
+		cin >> c;
+		map[i][j] = c - 'A';
+	}
+	visit[map[0][0]] = 1;
+	solve(0, 0, 1);
 	cout << ans;
 	return 0;
 }
