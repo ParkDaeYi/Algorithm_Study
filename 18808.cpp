@@ -1,58 +1,44 @@
-#include <stdio.h>
-#pragma warning (disable:4996)
+#include <iostream>
+using namespace std;
 
-int n, m, r, c, k, mp[41][41], pp[11][11];
+int n, m, k, r, c, map[40][40], st[10][10], ans;
 
-void rotate() {
-	int tmp[11][11];
-	for (int i = 0; i < r; ++i) for (int j = 0; j < c; ++j) tmp[i][j] = pp[i][j];
-	for (int i = 0; i < c; ++i) for (int j = 0; j < r; ++j) pp[i][j] = tmp[r - j - 1][i];
-	int t = r;
-	r = c;
-	c = t;
-}
-
-bool chk(int y, int x) {
-	for (int i = 0; i < r; ++i) {
-		for (int j = 0; j < c; ++j) {
-			if (mp[y + i][x + j] && pp[i][j]) return 0;
-		}
-	}
-	for (int i = 0; i < r; ++i) {
-		for (int j = 0; j < c; ++j) {
-			if (pp[i][j]) mp[y + i][x + j] = 1;
-		}
-	}
+bool cmp(int y, int x) {
+	// 이미 스티커가 붙어 있을 경우 return false
+	for (int i = 0;i < r;++i) for (int j = 0;j < c;++j) if (st[i][j] & map[y + i][x + j]) return 0;
+	// 겹치는 부분이 없을 경우 스티커를 붙임, return true
+	for (int i = 0;i < r;++i) for (int j = 0;j < c;++j) if (st[i][j]) map[y + i][x + j] = 1;
 	return 1;
 }
 
-int main() {
+bool chk() {
+	// n-r, m-c 로 스티커 범위에 맞춰서 검사
+	for (int i = 0;i <= n - r;++i) for (int j = 0;j <= m - c;++j) if (cmp(i, j)) return 1;
+	return 0;
+}
 
-	scanf("%d %d %d\n", &n, &m, &k);
+void rotate() {
+	int tmp[10][10];
+	for (int i = 0;i < r;++i) for (int j = 0;j < c;++j) tmp[i][j] = st[i][j];
+	for (int i = 0;i < c;++i) for (int j = 0;j < r;++j) st[i][j] = tmp[r - j - 1][i];
+	int t = r; r = c; c = t;
+}
+
+int main() {
+	ios_base::sync_with_stdio(0);
+	cin.tie(0); cout.tie(0);
+
+	cin >> n >> m >> k;
 	while (k--) {
-		scanf("%d %d", &r, &c);
-		for (int i = 0; i < r; ++i) for (int j = 0; j < c; ++j) scanf("%d", &pp[i][j]);
-		for (int i = 0; i < 4; ++i) {
-			bool flag = 0;
-			for (int y = 0; y <= n - r; ++y) {
-				for (int x = 0; x <= m - c; ++x) {
-					if (chk(y, x)) {
-						flag = 1;
-						break;
-					}
-				}
-				if (flag) break;
-			}
-			if (flag) break;
+		cin >> r >> c;
+		for (int i = 0;i < r;++i) for (int j = 0;j < c;++j) cin >> st[i][j];
+		// 0, 90, 180, 270도 ==> 4번 확인 해야 함
+		for (int i = 0;i < 4;++i) {
+			if (chk()) break;
 			rotate();
 		}
 	}
-	int cnt = 0;
-	for (int i = 0; i < n; ++i) {
-		for (int j = 0; j < m; ++j) {
-			if (mp[i][j]) cnt++;
-		}
-	}
-	printf("%d", cnt);
+	for (int i = 0;i < n;++i) for (int j = 0;j < m;++j) if (map[i][j]) ans++;
+	cout << ans;
 	return 0;
 }
