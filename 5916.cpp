@@ -92,6 +92,11 @@ void update_hld(int a, int b, int v) {
 		a = par[st];
 	}
 	if (in[a] > in[b]) swap(a, b);
+	// while 문과 위의 swap을 통해서 a는 lca가 됨
+	// a 와 b는 같은 체인에 속하게 되므로
+	// in[a] + 1, in[b] 를 통해 사이 경로의 범위를 지정할 수 있음
+	// ==>	 dfs2 와 dfs3 을 통해 in[a] + 1 은
+	//	(자신의 체인에 속한) 바로 밑 자식과 연결된 간선이다
 	update_range(1, 1, n, in[a] + 1, in[b], v);
 }
 
